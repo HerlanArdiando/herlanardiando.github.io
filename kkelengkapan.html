@@ -1,0 +1,313 @@
+<?php
+
+ $sql="select * from `$tbkelengkapan` where `id_siswa`='$_SESSION[cid]'";
+	 $jum=getJum($conn,$sql);
+		if($jum == 0){
+			echo "<script>alert('$id_kelengkapan Silahkan Lakukan Pembayaran Terlebih dahulu !');document.location.href='?mnu=noticekelengkapan';</script>";
+		}
+
+$tanggal=WKT(date("Y-m-d"));
+$pro="simpan";
+$foto0="avatar.jpg";
+$bukti_pembayaran0="avatar.jpg";
+$akta_lahir0="avatar.jpg";
+$kartu_keluarga0="avatar.jpg";
+$status_bayar="Aktif";
+//$PATH="ypathcss";
+?>
+<link type="text/css" href="<?php echo "$PATH/base/";?>ui.all.css" rel="stylesheet" />   
+<script type="text/javascript" src="<?php echo "$PATH/";?>jquery-1.3.2.js"></script>
+<script type="text/javascript" src="<?php echo "$PATH/";?>ui/ui.core.js"></script>
+<script type="text/javascript" src="<?php echo "$PATH/";?>ui/ui.datepicker.js"></script>
+<script type="text/javascript" src="<?php echo "$PATH/";?>ui/i18n/ui.datepicker-id.js"></script>
+    
+  <script type="text/javascript"> 
+      $(document).ready(function(){
+        $("#tanggal").datepicker({
+					dateFormat  : "dd MM yy",        
+          changeMonth : true,
+          changeYear  : true					
+        });
+      });
+    </script>    
+<style>
+#table {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#table td, #table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#table tr{background-color: #f2f2f2;}
+
+#table tr:hover {background-color: #ddd;}
+
+#table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #20B2AA;
+    color: white;
+}
+</style>
+
+<script type="text/javascript"> 
+function PRINT(){ 
+win=window.open('kelengkapan/print.php','win','width=1000, height=400, menubar=0, scrollbars=1, resizable=0, location=0, toolbar=0, status_bayar=0'); } 
+</script>
+<script language="JavaScript">
+function buka(url) {window.open(url, 'window_baru', 'width=800,height=600,left=320,top=100,resizable=1,scrollbars=1');}
+</script>
+
+
+<?php
+  $sql="select `id_kelengkapan` from `$tbkelengkapan` order by `id_kelengkapan` desc";
+$q=mysqli_query($conn, $sql);
+  $jum=mysqli_num_rows($q);
+  $th=date("y");
+  $bl=date("m")+0;if($bl<10){$bl="0".$bl;}
+
+  $kd="KLP".$th.$bl;//KEG1610001
+  if($jum > 0){
+   $d=mysqli_fetch_array($q);
+   $idmax=$d["id_kelengkapan"];
+   
+   $bul=substr($idmax,5,2);
+   $tah=substr($idmax,3,2);
+    if($bul==$bl && $tah==$th){
+     $urut=substr($idmax,7,3)+1;
+     if($urut<10){$idmax="$kd"."00".$urut;}
+     else if($urut<100){$idmax="$kd"."0".$urut;}
+     else{$idmax="$kd".$urut;}
+    }//==
+    else{
+     $idmax="$kd"."001";
+     }   
+   }//jum>0
+  else{$idmax="$kd"."001";}
+  $id_kelengkapan=$idmax;
+?>
+
+<?php
+if($_GET["pro"]=="ubah"){
+	$id_siswa=$_SESSION["cid"];
+	$id_kelengkapan=$_GET["kode"];
+	$sql="select * from `$tbkelengkapan` where `id_kelengkapan`='$id_kelengkapan'";
+	$d=getField($conn,$sql);
+				$id_kelengkapan=$d["id_kelengkapan"];
+				$id_siswa=$d["id_siswa"];
+				$bukti_pembayaran=$d["bukti_pembayaran"];
+				$bukti_pembayaran0=$d["bukti_pembayaran"];
+				$foto=$d["foto"];
+				$foto0=$d["foto"];
+				$akta_lahir=$d["akta_lahir"];
+				$akta_lahir0=$d["akta_lahir"];
+				$kartu_keluarga=$d["kartu_keluarga"];
+				$kartu_keluarga0=$d["kartu_keluarga"];
+				$status_bayar=$d["status_bayar"];
+				$status_akta=$d["status_akta"];
+				$status_kartukeluarga=$d["status_kartukeluarga"];
+				$catatan=$d["catatan"];
+				$pro="ubah";		
+}
+?>
+
+<link rel="stylesheet" href="js/jquery-ui.css">
+  <link rel="stylesheet" href="resources/demos/style.css">
+<script src="js/jquery-1.12.4.js"></script>
+  <script src="js/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#accordion" ).accordion({
+      collapsible: true
+    });
+  } );
+  </script>
+<div id="accordion">
+  <h4>Form Input Kelengkapan Data Calon Siswa</h4>
+  <div>
+  
+<form action="" method="post" enctype="multipart/form-data">
+<table id="table">
+
+
+  <td height="24"><div align="left">Foto
+  </div>
+  <td valign="top">:<td colspan="2"><label for="foto"></label>
+        <div align="left">
+          <input name="foto" required="required" type="file" id="foto" size="20" /> 
+          => <a href='#' onclick='buka("kelengkapan/zoom.php?id=<?php echo $id_kelengkapan;?>")'><?php echo $foto0;?></a></div></td>
+</tr>
+
+<tr>
+  <td height="24"><div align="left">Akta Lahir
+  </div>
+  <td valign="top">:<td colspan="2"><label for="akta_lahir"></label>
+        <div align="left">
+          <input name="akta_lahir" required="required" type="file" id="akta_lahir" size="20" /> 
+          => <a href='#' onclick='buka("kelengkapan/zoom3.php?id=<?php echo $id_kelengkapan;?>")'><?php echo $akta_lahir0;?></a></div></td>
+</tr>
+<tr>
+  <td height="24"><div align="left">Kartu Keluarga
+  </div>
+  <td valign="top">:<td colspan="2"><label for="kartu_keluarga"></label>
+        <div align="left">
+          <input name="kartu_keluarga" required="required" type="file" id="kartu_keluarga" size="20" /> 
+          => <a href='#' onclick='buka("kelengkapan/zoom4.php?id=<?php echo $id_kelengkapan;?>")'><?php echo $kartu_keluarga0;?></a></div></td>
+</tr>
+
+
+
+<tr>
+<td><label for="status_akta">
+  <div align="left">Status Akta</div>
+</label>
+<td valign="top">:<td colspan="2">
+  <div align="left">
+    <input type="radio" name="status_akta" required="required" id="status_akta" value="Ada" <?php if($status_akta=="Ada"){echo"checked";}?>/>
+    Ada
+  <input type="radio" name="status_akta" id="status_akta" value="Tidak Ada" <?php if($status_akta=="Tidak Ada"){echo"checked";}?>/> Tidak Ada
+  </div></td></tr>
+
+<tr>
+<td><label for="status_kartukeluarga">
+  <div align="left">Status Kartu Keluarga</div>
+</label>
+<td valign="top">:<td colspan="2">
+  <div align="left">
+    <input type="radio" name="status_kartukeluarga" required="required" id="status_kartukeluarga" value="Ada" <?php if($status_kartukeluarga=="Ada"){echo"checked";}?>/>
+    Ada
+  <input type="radio" name="status_kartukeluarga" id="status_kartukeluarga" value="Tidak Ada" <?php if($status_kartukeluarga=="Tidak Ada"){echo"checked";}?>/> Tidak Ada
+  </div></td></tr>
+
+<tr>
+<td height="24"><label for="catatan">
+  <div align="left">Catatan</div>
+</label>
+<td valign="top">:<td><div align="left">
+  <textarea name="catatan" cols="15" id="catatan"><?php echo $catatan;?></textarea>
+</div></td>
+</tr>
+
+<tr>
+<td>
+<td valign="top">
+<td colspan="2"><div align="left">
+  <input name="Simpan" type="submit" id="Simpan" value="Simpan" />
+  <input name="pro" type="hidden" id="pro" value="<?php echo $pro;?>" />
+  <input name="foto0" type="hidden" id="foto0" value="<?php echo $foto0;?>" />
+  <input name="bukti_pembayaran0" type="hidden" id="bukti_pembayaran0" value="<?php echo $bukti_pembayaran0;?>" />
+  <input name="akta_lahir0" type="hidden" id="akta_lahir0" value="<?php echo $foto0;?>" />
+  <input name="kartu_keluarga0" type="hidden" id="kartu_keluarga0" value="<?php echo $foto0;?>" />
+  <input name="id_kelengkapan" type="hidden" id="id_kelengkapan" value="<?php echo $id_kelengkapan;?>" />
+  <input name="id_kelengkapan0" type="hidden" id="id_kelengkapan0" value="<?php echo $id_kelengkapan0;?>" />
+  <a href="?mnu=kkelengkapan">
+    <input name="Batal" type="button" id="Batal" value="Batal" />
+    </a>
+</div></td></tr>
+</table>
+</form>
+<br>
+<div align="left"><font color="#FF0000">Form Catatan Boleh Dikosongkan Jika Tidak Perlu</font></div>
+
+
+</div>
+<h4>Cetak Bukti Pendaftaran</h4>
+<div>
+Cetak 
+| <a href="bukti/print2.php"><img src='ypathicon/print.png' alt='PRINT' OnClick="PRINT()"> |
+<br>
+<br>
+<div align="left"><font color="#FF0000">
+Penting !<br>
+Harap Cetak Bukti Pendaftaran dan Simpan Sebagai Bukti Anda Telah Mendaftar, Terima Kasih...
+
+</div>
+</div>
+<?php
+if(isset($_POST["Simpan"])){
+	$pro=strip_tags($_POST["pro"]);
+	$id_kelengkapan=strip_tags($_POST["id_kelengkapan"]);
+	$id_kelengkapan0=strip_tags($_POST["id_kelengkapan"]);
+	$id_siswa=strip_tags($_POST["id_siswa"]);
+
+	$bukti_pembayaran0=strip_tags($_POST["bukti_pembayaran0"]);
+	if ($_FILES["bukti_pembayaran"] != "") {
+		@copy($_FILES["bukti_pembayaran"]["tmp_name"],"$YPATH/".$_FILES["bukti_pembayaran"]["name"]);
+		$bukti_pembayaran=$_FILES["bukti_pembayaran"]["name"];
+		} 
+	else {$bukti_pembayaran=$bukti_pembayaran0;}
+	if(strlen($bukti_pembayaran)<1){$bukti_pembayaran=$bukti_pembayaran0;}
+	
+	$foto0=strip_tags($_POST["foto0"]);
+	if ($_FILES["foto"] != "") {
+		@copy($_FILES["foto"]["tmp_name"],"$YPATH/".$_FILES["foto"]["name"]);
+		$foto=$_FILES["foto"]["name"];
+		} 
+	else {$foto=$foto0;}
+	if(strlen($foto)<1){$foto=$foto0;}
+	$akta_lahir=strip_tags($_POST["akta_lahir0"]);
+	if ($_FILES["akta_lahir"] != "") {
+		@copy($_FILES["akta_lahir"]["tmp_name"],"$YPATH/".$_FILES["akta_lahir"]["name"]);
+		$akta_lahir=$_FILES["akta_lahir"]["name"];
+		} 
+	else {$akta_lahir=$akta_lahir0;}
+	if(strlen($akta_lahir)<1){$akta_lahir=$akta_lahir0;}
+
+	$kartu_keluarga=strip_tags($_POST["kartu_keluarga0"]);
+	if ($_FILES["kartu_keluarga"] != "") {
+		@copy($_FILES["kartu_keluarga"]["tmp_name"],"$YPATH/".$_FILES["kartu_keluarga"]["name"]);
+		$kartu_keluarga=$_FILES["kartu_keluarga"]["name"];
+		} 
+	else {$kartu_keluarga=$kartu_keluarga0;}
+	if(strlen($kartu_keluarga)<1){$kartu_keluarga=$kartu_keluarga0;}
+
+	$status_bayar=strip_tags($_POST["status_bayar"]);
+	$status_akta=strip_tags($_POST["status_akta"]);
+	$status_kartukeluarga=strip_tags($_POST["status_kartukeluarga"]);
+	$catatan=strip_tags($_POST["catatan"]);
+	
+
+	
+if($pro=="simpan"){
+$sql=" INSERT INTO `$tbkelengkapan` (
+`id_kelengkapan` ,
+`id_siswa` ,
+`bukti_pembayaran` ,
+`foto` ,
+`akta_lahir` ,
+`kartu_keluarga` ,
+`status_bayar` ,
+`status_akta` ,
+`status_kartukeluarga` ,
+`catatan`
+) VALUES (
+'$id_kelengkapan', 
+'".$_SESSION['cid']."',
+'$bukti_pembayaran', 
+'$foto',
+'$akta_lahir',
+'$kartu_keluarga',
+'$status_bayar', 
+'$status_akta', 
+'$status_kartukeluarga', 
+'$catatan'
+)";
+	
+$simpan=process($conn,$sql);
+	if($simpan) {echo "<script>alert('Data  berhasil disimpan !');document.location.href='?mnu=kkelengkapan';</script>";}
+		else{echo"<script>alert('Data  gagal disimpan...');document.location.href='?mnu=kkelengkapan';</script>";}
+	}
+	else{
+	$sql="update `$tbkelengkapan` set `id_siswa`='".$_SESSION['cid']."',`bukti_pembayaran`='$bukti_pembayaran',`foto`='$foto',`akta_lahir`='$akta_lahir' ,`kartu_keluarga`='$kartu_keluarga',`status_bayar`='$status_bayar',`status_akta`='$status_akta',`status_kartukeluarga`='$status_kartukeluarga',`catatan`='$catatan',
+	`foto`='$foto'  where `id_kelengkapan`='$id_kelengkapan0'";
+	$ubah=process($conn,$sql);
+		if($ubah) {echo "<script>alert('Data  berhasil diubah !');document.location.href='?mnu=kkelengkapan';</script>";}
+		else{echo"<script>alert('Data  gagal diubah...');document.location.href='?mnu=kkelengkapan';</script>";}
+	}//else simpan
+}
+?>
