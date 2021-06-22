@@ -1,0 +1,138 @@
+<?php
+$pro="simpan";
+$tanggal_lahir=WKT(date("Y-m-d"));
+?>
+<link type="text/css" href="<?php echo "$PATH/base/";?>ui.all.css" rel="stylesheet" />   
+<script type="text/javascript" src="<?php echo "$PATH/";?>jquery-1.3.2.js"></script>
+<script type="text/javascript" src="<?php echo "$PATH/";?>ui/ui.core.js"></script>
+<script type="text/javascript" src="<?php echo "$PATH/";?>ui/ui.datepicker.js"></script>
+<script type="text/javascript" src="<?php echo "$PATH/";?>ui/i18n/ui.datepicker-id.js"></script>
+    
+  <script type="text/javascript"> 
+      $(document).ready(function(){
+        $("#tanggal_lahir").datepicker({
+					dateFormat  : "dd MM yy",        
+          changeMonth : true,
+          changeYear  : true					
+        });
+      });
+    </script>    
+<style>
+#table {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#table td, #table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#table tr{background-color: #f2f2f2;}
+
+#table tr:hover {background-color: #ddd;}
+
+#table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #20B2AA;
+    color: white;
+}
+</style>
+
+<script type="text/javascript"> 
+function PRINT(){ 
+win=window.open('siswa/print.php','win','width=1000, height=400, menubar=0, scrollbars=1, resizable=0, location=0, toolbar=0, status=0'); } 
+</script>
+<script language="JavaScript">
+function buka(url) {window.open(url, 'window_baru', 'width=800,height=600,left=320,top=100,resizable=1,scrollbars=1');}
+</script>
+
+
+<link rel="stylesheet" href="js/jquery-ui.css">
+  <link rel="stylesheet" href="resources/demos/style.css">
+<script src="js/jquery-1.12.4.js"></script>
+  <script src="js/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#accordion" ).accordion({
+      collapsible: true
+    });
+  } );
+  </script>
+<div id="accordion">
+<?php
+
+ $sqld="select distinct(status) from `$tbsiswa` order by `status` asc";
+ 	$arrd=getData($conn,$sqld);
+		foreach($arrd as $dd) {							
+				$status=$dd["status"];
+$no=1;				
+				?>
+<h4><a href="#">Data Status <?php echo $status;?></a></h4>
+<div>
+
+Data siswa: 
+| <a href="siswa/pdf.php"><img src='ypathicon/pdf.png' alt='PDF'></a> 
+| <a href="siswa/xls.php"><img src='ypathicon/xls.png' alt='XLS'></a> 
+| <a href="siswa/xml.php"><img src='ypathicon/xml.png' alt='XML'></a> 
+| <img src='ypathicon/print.png' alt='PRINT' OnClick="PRINT()"> |
+<br>
+
+<table id="table">
+  <tr bgcolor="#036">
+    <th width="3%"><center>No</th>
+    <th width="20%"><center>Nama Siswa</center></th>
+    <th width="30%"><center>Info Siswa</center></th>
+    <th width="15%"><center>Keterangan</center></th>
+  </tr>
+<?php  
+  $sql="select * from `$tbsiswa` where `status`='$status' order by `id_siswa` desc";
+  $jum=getJum($conn,$sql);
+		if($jum > 0){
+	//--------------------------------------------------------------------------------------------
+	$batas   = 10;
+	$page = $_GET['page'];
+	if(empty($page)){$posawal  = 0;$page = 1;}
+	else{$posawal = ($page-1) * $batas;}
+	
+	$sql2 = $sql." LIMIT $posawal,$batas";
+	$no = $posawal+1;
+	//--------------------------------------------------------------------------------------------									
+	$arr=getData($conn,$sql2);
+		foreach($arr as $d) {							
+				$id_siswa=$d["id_siswa"];
+				$nama_siswa=$d["nama_siswa"];
+				$jenis_kelamin=$d["jenis_kelamin"];
+				$tempat_lahir=$d["tempat_lahir"];
+				$tanggal_lahir=WKT($d["tanggal_lahir"]);
+				$alamat=$d["alamat"];
+				$nama_orangtua=$d["nama_orangtua"];
+				$email=$d["email"];
+				$telepon=$d["telepon"];
+				$username=$d["username"];
+				$password=$d["password"];
+				$status=$d["status"];
+				$keterangan=$d["keterangan"];
+
+					$color="#dddddd";	
+					if($no %2==0){$color="#eeeeee";}
+echo"<tr bgcolor='$color'>
+				<td>$no</td>
+				<td>$nama_siswa ($id_siswa) <br> Email : $email - Telp. $telepon </td>
+				<td>Jenis Kelamin : $jenis_kelamin <br> Tempat Tanggal Lahir : $tempat_lahir , $tanggal_lahir <br> Nama Orangtua : $nama_orangtua <br> Alamat : $alamat</td>
+				<td>$keterangan</td>
+				</tr>";
+			
+			$no++;
+			}//while
+		}//if
+		else{echo"<tr><td colspan='7'><blink>Maaf, Data siswa belum tersedia...</blink></td></tr>";}
+?>
+</table>
+
+</div>
+<?php }?>
+</div>
