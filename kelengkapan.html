@@ -1,0 +1,471 @@
+<?php
+
+$tanggal=WKT(date("Y-m-d"));
+$pro="simpan";
+$foto0="avatar.jpg";
+$bukti_pembayaran0="avatar.jpg";
+$akta_lahir0="avatar.jpg";
+$kartu_keluarga0="avatar.jpg";
+$status_bayar="Aktif";
+//$PATH="ypathcss";
+?>
+<link type="text/css" href="<?php echo "$PATH/base/";?>ui.all.css" rel="stylesheet" />   
+<script type="text/javascript" src="<?php echo "$PATH/";?>jquery-1.3.2.js"></script>
+<script type="text/javascript" src="<?php echo "$PATH/";?>ui/ui.core.js"></script>
+<script type="text/javascript" src="<?php echo "$PATH/";?>ui/ui.datepicker.js"></script>
+<script type="text/javascript" src="<?php echo "$PATH/";?>ui/i18n/ui.datepicker-id.js"></script>
+    
+  <script type="text/javascript"> 
+      $(document).ready(function(){
+        $("#tanggal").datepicker({
+					dateFormat  : "dd MM yy",        
+          changeMonth : true,
+          changeYear  : true					
+        });
+      });
+    </script>    
+<style>
+#table {
+    font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+    border-collapse: collapse;
+    width: 100%;
+}
+
+#table td, #table th {
+    border: 1px solid #ddd;
+    padding: 8px;
+}
+
+#table tr{background-color: #f2f2f2;}
+
+#table tr:hover {background-color: #ddd;}
+
+#table th {
+    padding-top: 12px;
+    padding-bottom: 12px;
+    text-align: left;
+    background-color: #20B2AA;
+    color: white;
+}
+</style>
+
+<script type="text/javascript"> 
+function PRINT(){ 
+win=window.open('kelengkapan/print.php','win','width=1000, height=400, menubar=0, scrollbars=1, resizable=0, location=0, toolbar=0, status_bayar=0'); } 
+</script>
+<script language="JavaScript">
+function buka(url) {window.open(url, 'window_baru', 'width=800,height=600,left=320,top=100,resizable=1,scrollbars=1');}
+</script>
+
+
+<?php
+  $sql="select `id_kelengkapan` from `$tbkelengkapan` order by `id_kelengkapan` desc";
+$q=mysqli_query($conn, $sql);
+  $jum=mysqli_num_rows($q);
+  $th=date("y");
+  $bl=date("m")+0;if($bl<10){$bl="0".$bl;}
+
+  $kd="KLP".$th.$bl;//KEG1610001
+  if($jum > 0){
+   $d=mysqli_fetch_array($q);
+   $idmax=$d["id_kelengkapan"];
+   
+   $bul=substr($idmax,5,2);
+   $tah=substr($idmax,3,2);
+    if($bul==$bl && $tah==$th){
+     $urut=substr($idmax,7,3)+1;
+     if($urut<10){$idmax="$kd"."00".$urut;}
+     else if($urut<100){$idmax="$kd"."0".$urut;}
+     else{$idmax="$kd".$urut;}
+    }//==
+    else{
+     $idmax="$kd"."001";
+     }   
+   }//jum>0
+  else{$idmax="$kd"."001";}
+  $id_kelengkapan=$idmax;
+?>
+
+<?php
+if($_GET["pro"]=="ubah"){
+	$id_kelengkapan=$_GET["kode"];
+	$sql="select * from `$tbkelengkapan` where `id_kelengkapan`='$id_kelengkapan'";
+	$d=getField($conn,$sql);
+				$id_kelengkapan=$d["id_kelengkapan"];
+				$id_siswa=$d["id_siswa"];
+				$bukti_pembayaran=$d["bukti_pembayaran"];
+				$bukti_pembayaran0=$d["bukti_pembayaran"];
+				$foto=$d["foto"];
+				$foto0=$d["foto"];
+				$akta_lahir=$d["akta_lahir"];
+				$akta_lahir0=$d["akta_lahir"];
+				$kartu_keluarga=$d["kartu_keluarga"];
+				$kartu_keluarga0=$d["kartu_keluarga"];
+				$status_bayar=$d["status_bayar"];
+				$status_akta=$d["status_akta"];
+				$status_kartukeluarga=$d["status_kartukeluarga"];
+				$catatan=$d["catatan"];
+				
+				$pro="ubah";		
+}
+?>
+
+<link rel="stylesheet" href="js/jquery-ui.css">
+  <link rel="stylesheet" href="resources/demos/style.css">
+<script src="js/jquery-1.12.4.js"></script>
+  <script src="js/jquery-ui.js"></script>
+  <script>
+  $( function() {
+    $( "#accordion" ).accordion({
+      collapsible: true
+    });
+  } );
+  </script>
+<div id="accordion">
+  <h4>Form Input Kelengkapan Calon Siswa</h4>
+  <div>
+  
+<form action="" method="post" enctype="multipart/form-data">
+<table id="table">
+<tr>
+<th width="190"><label for="id_kelengkapan">
+  <div align="left">ID Kelengkapan</div>
+</label>
+<th width="27" valign="top"><div align="center">:
+</div>
+<th colspan="2"><b><?php echo $id_kelengkapan;?></b></th></tr>
+
+<tr>
+<td><label for="id_siswa">
+  <div align="left">Pilih Siswa</div>
+</label>
+<td valign="top">:<td width="861"><div align="left">
+  <select name="id_siswa" autofocus="autofocus" required="required" id="id_siswa">
+    <option>-</option>
+    <?php  
+  $sql="select * from `$tbsiswa`";
+$arr=getData($conn,$sql);
+		foreach($arr as $d) {							
+				$id_siswa0=$d["id_siswa"];
+				$nama_siswa=$d["nama_siswa"];
+		echo"<option value='$id_siswa0' ";if($id_siswa0==$id_siswa){echo"selected";} echo">$nama_siswa ($id_siswa0)</option>";
+		}
+?>
+  </select>
+</div></td></tr>
+
+<tr>
+  <td height="24"><div align="left">Bukti Pembayaran
+  </div>
+  <td valign="top">:<td colspan="2"><label for="bukti_pembayaran"></label>
+        <div align="left">
+          <input name="bukti_pembayaran" type="file" id="bukti_pembayaran" size="20" /> 
+          => <a href='#' onclick='buka("kelengkapan/zoom2.php?id=<?php echo $id_kelengkapan;?>")'><?php echo $bukti_pembayaran0;?></a></div></td>
+</tr>
+<tr>
+  <td height="24"><div align="left">Foto
+  </div>
+  <td valign="top">:<td colspan="2"><label for="foto"></label>
+        <div align="left">
+          <input name="foto" type="file" id="foto" size="20" /> 
+          => <a href='#' onclick='buka("kelengkapan/zoom.php?id=<?php echo $id_kelengkapan;?>")'><?php echo $foto0;?></a></div></td>
+</tr>
+
+<tr>
+  <td height="24"><div align="left">Akta Lahir
+  </div>
+  <td valign="top">:<td colspan="2"><label for="akta_lahir"></label>
+        <div align="left">
+          <input name="akta_lahir" type="file"  id="akta_lahir" size="20" /> 
+          => <a href='#' onclick='buka("kelengkapan/zoom3.php?id=<?php echo $id_kelengkapan;?>")'><?php echo $akta_lahir0;?></a></div></td>
+</tr>
+<tr>
+  <td height="24"><div align="left">Kartu Keluarga
+  </div>
+  <td valign="top">:<td colspan="2"><label for="kartu_keluarga"></label>
+        <div align="left">
+          <input name="kartu_keluarga" type="file" id="kartu_keluarga" size="20" /> 
+          => <a href='#' onclick='buka("kelengkapan/zoom4.php?id=<?php echo $id_kelengkapan;?>")'><?php echo $kartu_keluarga0;?></a></div></td>
+</tr>
+
+<tr>
+<td><label for="status_bayar">
+  <div align="left">Status bayar</div>
+</label>
+<td valign="top">:<td colspan="2">
+  <div align="left">
+    <input type="radio" name="status_bayar" autofocus="autofocus" required="required" id="status_bayar" value="Lunas" <?php if($status_bayar=="Lunas"){echo"checked";}?>/>
+    Lunas
+  <input type="radio" name="status_bayar" id="status_bayar" value="Belum Lunas" <?php if($status_bayar=="Belum Lunas"){echo"checked";}?>/>Belum Lunas
+  </div></td></tr>
+
+<tr>
+<td><label for="status_akta">
+  <div align="left">Status akta</div>
+</label>
+<td valign="top">:<td colspan="2">
+  <div align="left">
+    <input type="radio" name="status_akta" autofocus="autofocus" required="required" id="status_akta" value="Ada" <?php if($status_akta=="Ada"){echo"checked";}?>/>
+    Ada
+  <input type="radio" name="status_akta" id="status_akta" value="Tidak Ada" <?php if($status_akta=="Tidak Ada"){echo"checked";}?>/>Tidak Ada
+  </div></td></tr>
+
+<tr>
+<td><label for="status_kartukeluarga">
+  <div align="left">Status kartu keluarga</div>
+</label>
+<td valign="top">:<td colspan="2">
+  <div align="left">
+    <input type="radio" name="status_kartukeluarga" autofocus="autofocus" required="required" id="status_kartukeluarga" value="Ada" <?php if($status_kartukeluarga=="Ada"){echo"checked";}?>/>
+    Ada
+  <input type="radio" name="status_kartukeluarga" id="status_kartukeluarga" value="Tidak Ada" <?php if($status_kartukeluarga=="Tidak Ada"){echo"checked";}?>/>Tidak Ada
+  </div></td></tr>
+
+<tr>
+<td height="24"><label for="catatan">
+  <div align="left">Catatan</div>
+</label>
+<td valign="top">:<td><div align="left">
+  <textarea name="catatan" cols="15" id="catatan"><?php echo $catatan;?></textarea>
+</div></td>
+</tr>
+
+<tr>
+<td>
+<td valign="top">
+<td colspan="2"><div align="left">
+  <input name="Simpan" type="submit" id="Simpan" value="Simpan" />
+  <input name="pro" type="hidden" id="pro" value="<?php echo $pro;?>" />
+  <input name="foto0" type="hidden" id="foto0" value="<?php echo $foto0;?>" />
+  <input name="bukti_pembayaran0" type="hidden" id="bukti_pembayaran0" value="<?php echo $bukti_pembayaran0;?>" />
+  <input name="akta_lahir0" type="hidden" id="akta_lahir0" value="<?php echo $foto0;?>" />
+  <input name="kartu_keluarga0" type="hidden" id="kartu_keluarga0" value="<?php echo $foto0;?>" />
+  <input name="id_kelengkapan" type="hidden" id="id_kelengkapan" value="<?php echo $id_kelengkapan;?>" />
+  <input name="id_kelengkapan0" type="hidden" id="id_kelengkapan0" value="<?php echo $id_kelengkapan0;?>" />
+  <a href="?mnu=kelengkapan">
+    <input name="Batal" type="button" id="Batal" value="Batal" />
+    </a>
+</div></td></tr>
+</table>
+</form>
+
+</div>
+<h4>Data Kelengkapan Calon Siswa</h4>
+<div>
+
+Cetak : 
+| <a href="kelengkapan/pdf.php"><img src='ypathicon/pdf.png' alt='PDF'></a> 
+| <img src='ypathicon/print.png' alt='PRINT' OnClick="PRINT()"> |
+<br>
+
+<table id="table">
+  <tr bgcolor="#036">
+    <th width="4%">No</td>
+    <th width="11%"><center>ID Kelengkapan</center></td>
+    <th width="10%"><center>ID Siswa</center></td>
+	<th width="10%"><center>Bukti Pembayaran</center></td>
+    <th width="6%"><center>Foto Calon Siswa</center></td>
+    <th width="7%"><center>Akta Lahir</center></td>
+    <th width="8%"><center>Kartu Keluarga</center></td>
+    <th width="21%"><center>Status</center></td>
+	<th width="15%"><center>Catatan</center></td>
+    <th width="8%"><center>Menu</center></td>
+
+  </tr>
+<?php  
+  $sql="select * from `$tbkelengkapan` order by `id_kelengkapan` desc";
+  $jum=getJum($conn,$sql);
+		if($jum > 0){
+//--------------------------------------------------------------------------------------------
+$batas   = 10;
+$page = $_GET['page'];
+if(empty($page)){$posawal  = 0;$page = 1;}
+else{$posawal = ($page-1) * $batas;}
+
+$sql2 = $sql." LIMIT $posawal,$batas";
+$no = $posawal+1;
+//--------------------------------------------------------------------------------------------									
+	$arr=getData($conn,$sql2);
+		foreach($arr as $d) {						
+				$id_kelengkapan=$d["id_kelengkapan"];
+				$id_siswa=$d["id_siswa"];
+				$nama=getSiswa($conn,$d["id_siswa"]);
+				$bukti_pembayaran=$d["bukti_pembayaran"];
+				$foto=$d["foto"];
+				$akta_lahir=$d["akta_lahir"];
+				$kartu_keluarga=$d["kartu_keluarga"];
+				$status_bayar=$d["status_bayar"];
+				$status_akta=$d["status_akta"];
+				$status_kartukeluarga=$d["status_kartukeluarga"];
+				$catatan=$d["catatan"];
+				$color="#dddddd";		
+					if($no %2==0){$color="#eeeeee";}
+echo"<tr bgcolor='$color'>
+				<td>$no</td>
+				<td>$id_kelengkapan</td>
+				<td>$nama ($id_siswa)</td>
+				<td><div align='center'>";
+echo"<a href='#' onclick='buka(\"kelengkapan/zoom2.php?id=$id_kelengkapan\")'>
+<img src='$YPATH/$bukti_pembayaran' width='40' height='40' /></a></div>";
+				echo"</td>
+				<td><div align='center'>";
+echo"<a href='#' onclick='buka(\"kelengkapan/zoom.php?id=$id_kelengkapan\")'>
+<img src='$YPATH/$foto' width='40' height='40' /></a></div>";
+				echo"</td>
+				<td><div align='center'>";
+echo"<a href='#' onclick='buka(\"kelengkapan/zoom3.php?id=$id_kelengkapan\")'>
+<img src='$YPATH/$akta_lahir' width='40' height='40' /></a></div>";
+				echo"</td>
+				<td><div align='center'>";
+echo"<a href='#' onclick='buka(\"kelengkapan/zoom4.php?id=$id_kelengkapan\")'>
+<img src='$YPATH/$kartu_keluarga' width='40' height='40' /></a></div>";
+				echo"</td>
+				<td>Status Bayar : $status_bayar <br> Status Akta : $status_akta <br> Status KK : $status_kartukeluarga</td>
+				<td>$catatan</td>
+				<td><div align='center'>
+<a href='?mnu=kelengkapan&pro=ubah&kode=$id_kelengkapan'><img src='ypathicon/u.png' alt='ubah'></a>
+<a href='?mnu=kelengkapan&pro=hapus&kode=$id_kelengkapan'><img src='ypathicon/h.png' alt='hapus' 
+onClick='return confirm(\"Apakah Anda benar-benar akan menghapus $nama pada data kelengkapan ?..\")'></a></div></td>
+				</tr>";
+				
+			$no++;
+			}//while
+		}//if
+		else{echo"<tr><td colspan='6'><blink>Maaf, Data kelengkapan belum tersedia...</blink></td></tr>";}
+?>
+</table>
+
+<?php
+$jmldata = $jum;
+if($jmldata>0){
+	if($batas<1){$batas=1;}
+	$jmlhal  = ceil($jmldata/$batas);
+	echo "<div class=paging>";
+	if($page > 1){
+		$prev=$page-1;
+		echo "<span class=prevnext><a href='$_SERVER[PHP_SELF]?page=$prev&mnu=kelengkapan'>« Prev</a></span> ";
+	}
+	else{echo "<span class=disabled>« Prev</span> ";}
+
+	for($i=1;$i<=$jmlhal;$i++)
+	if ($i != $page){echo "<a href='$_SERVER[PHP_SELF]?page=$i&mnu=kelengkapan'>$i</a> ";}
+	else{echo " <span class=current>$i</span> ";}
+
+	if($page < $jmlhal){
+		$next=$page+1;
+		echo "<span class=prevnext><a href='$_SERVER[PHP_SELF]?page=$next&mnu=kelengkapan'>Next »</a></span>";
+	}
+	else{ echo "<span class=disabled>Next »</span>";}
+	echo "</div>";
+	}//if jmldata
+
+$jmldata = $jum;
+echo "<p align=center>Total data <b>$jmldata</b> item</p>";
+?>
+</div>
+</div>
+
+<?php
+if(isset($_POST["Simpan"])){
+	$pro=strip_tags($_POST["pro"]);
+	$id_kelengkapan=strip_tags($_POST["id_kelengkapan"]);
+	$id_kelengkapan0=strip_tags($_POST["id_kelengkapan"]);
+	$id_siswa=strip_tags($_POST["id_siswa"]);
+
+	$bukti_pembayaran0=strip_tags($_POST["bukti_pembayaran0"]);
+	if ($_FILES["bukti_pembayaran"] != "") {
+		@copy($_FILES["bukti_pembayaran"]["tmp_name"],"$YPATH/".$_FILES["bukti_pembayaran"]["name"]);
+		$bukti_pembayaran=$_FILES["bukti_pembayaran"]["name"];
+		} 
+	else {$bukti_pembayaran=$bukti_pembayaran0;}
+	if(strlen($bukti_pembayaran)<1){$bukti_pembayaran=$bukti_pembayaran0;}
+	
+	$foto0=strip_tags($_POST["foto0"]);
+	if ($_FILES["foto"] != "") {
+		@copy($_FILES["foto"]["tmp_name"],"$YPATH/".$_FILES["foto"]["name"]);
+		$foto=$_FILES["foto"]["name"];
+		} 
+	else {$foto=$foto0;}
+	if(strlen($foto)<1){$foto=$foto0;}
+	$akta_lahir=strip_tags($_POST["akta_lahir0"]);
+	if ($_FILES["akta_lahir"] != "") {
+		@copy($_FILES["akta_lahir"]["tmp_name"],"$YPATH/".$_FILES["akta_lahir"]["name"]);
+		$akta_lahir=$_FILES["akta_lahir"]["name"];
+		} 
+	else {$akta_lahir=$akta_lahir0;}
+	if(strlen($akta_lahir)<1){$akta_lahir=$akta_lahir0;}
+
+	$kartu_keluarga=strip_tags($_POST["kartu_keluarga0"]);
+	if ($_FILES["kartu_keluarga"] != "") {
+		@copy($_FILES["kartu_keluarga"]["tmp_name"],"$YPATH/".$_FILES["kartu_keluarga"]["name"]);
+		$kartu_keluarga=$_FILES["kartu_keluarga"]["name"];
+		} 
+	else {$kartu_keluarga=$kartu_keluarga0;}
+	if(strlen($kartu_keluarga)<1){$kartu_keluarga=$kartu_keluarga0;}
+
+	$status_bayar=strip_tags($_POST["status_bayar"]);
+	$status_akta=strip_tags($_POST["status_akta"]);
+	$status_kartukeluarga=strip_tags($_POST["status_kartukeluarga"]);
+	$catatan=strip_tags($_POST["catatan"]);
+	
+
+	
+if($pro=="simpan"){
+$sql=" INSERT INTO `$tbkelengkapan` (
+`id_kelengkapan` ,
+`id_siswa` ,
+`bukti_pembayaran` ,
+`foto` ,
+`akta_lahir` ,
+`kartu_keluarga` ,
+`status_bayar` ,
+`status_akta` ,
+`status_kartukeluarga` ,
+`catatan`
+) VALUES (
+'$id_kelengkapan', 
+'$id_siswa',
+'$bukti_pembayaran', 
+'$foto',
+'$akta_lahir',
+'$kartu_keluarga',
+'$status_bayar', 
+'$status_akta', 
+'$status_kartukeluarga', 
+'$catatan'
+)";
+	
+$simpan=process($conn,$sql);
+	if($simpan) {echo "<script>alert('Data $id_kelengkapan berhasil disimpan !');document.location.href='?mnu=kelengkapan';</script>";}
+		else{echo"<script>alert('Data $id_kelengkapan gagal disimpan...');document.location.href='?mnu=kelengkapan';</script>";}
+	}
+	else{
+	$sql="update `$tbkelengkapan` set 
+	`id_siswa`='$id_siswa',
+	`bukti_pembayaran`='$bukti_pembayaran',
+	`foto`='$foto',
+	`akta_lahir`='$akta_lahir',
+	`kartu_keluarga`='$kartu_keluarga',
+    `status_bayar`='$status_bayar',
+    `status_akta`='$status_akta',
+    `status_kartukeluarga`='$status_kartukeluarga',
+    `catatan`='$catatan',
+    `foto`='$foto'  
+	where `id_kelengkapan`='$id_kelengkapan0'";
+	$ubah=process($conn,$sql);
+		if($ubah) {echo "<script>alert('Data $id_kelengkapan berhasil diubah !');document.location.href='?mnu=kelengkapan';</script>";}
+		else{echo"<script>alert('Data $id_kelengkapan gagal diubah...');document.location.href='?mnu=kelengkapan';</script>";}
+	}//else simpan
+}
+?>
+
+<?php
+if($_GET["pro"]=="hapus"){
+$id_kelengkapan=$_GET["kode"];
+$sql="delete from `$tbkelengkapan` where `id_kelengkapan`='$id_kelengkapan'";
+$hapus=process($conn,$sql);
+	if($hapus) {echo "<script>alert('Data $id_kelengkapan berhasil dihapus !');document.location.href='?mnu=kelengkapan';</script>";}
+	else{echo"<script>alert('Data $id_kelengkapan gagal dihapus...');document.location.href='?mnu=kelengkapan';</script>";}
+}
+?>
+
